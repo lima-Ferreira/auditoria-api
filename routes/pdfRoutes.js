@@ -3,8 +3,7 @@ const router = express.Router();
 const Auditoria = require("../models/Auditoria");
 const { generateAuditHtml } = require("../utils/pdfTemplate");
 const puppeteer = require("puppeteer"); // Trocamos para puppeteer
-const path = require("path");
-import fs from "fs";
+const fs = require("fs");
 
 console.log("Conteúdo de /tmp/puppeteer:");
 console.log(fs.readdirSync("/tmp/puppeteer", { recursive: true }));
@@ -35,6 +34,7 @@ router.get("/:id", async (req, res) => {
         "--disable-dev-shm-usage",
       ],
     });
+
     const page = await browser.newPage();
     // No puppeteer usamos 'networkidle0' para garantir que carregou tudo
     await page.setContent(html, { waitUntil: "networkidle0" });
