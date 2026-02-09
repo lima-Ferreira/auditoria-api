@@ -22,13 +22,10 @@ router.get("/:id", async (req, res) => {
 
     // Configuração específica para rodar no RENDER
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome", // Caminho padrão do Google Chrome no Linux do Render
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--single-process",
-        "--no-zygote",
       ],
     });
 
