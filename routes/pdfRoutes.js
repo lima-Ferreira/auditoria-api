@@ -23,6 +23,7 @@ router.get("/:id", async (req, res) => {
     // Configuração específica para rodar no RENDER
     const browser = await puppeteer.launch({
       headless: "new",
+      executablePath: puppeteer.executablePath(),
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
