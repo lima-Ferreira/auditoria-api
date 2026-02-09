@@ -4,6 +4,10 @@ const Auditoria = require("../models/Auditoria");
 const { generateAuditHtml } = require("../utils/pdfTemplate");
 const puppeteer = require("puppeteer"); // Trocamos para puppeteer
 const path = require("path");
+import fs from "fs";
+
+console.log("Conteúdo de /tmp/puppeteer:");
+console.log(fs.readdirSync("/tmp/puppeteer", { recursive: true }));
 
 router.get("/:id", async (req, res) => {
   try {
