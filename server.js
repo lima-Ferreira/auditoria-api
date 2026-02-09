@@ -15,7 +15,7 @@ const pdfRoutes = require("./routes/pdfRoutes");
 const app = express();
 
 /* ---------- Middlewares ---------- */
-app.use(cors());
+app.use(cors({ origin: "*" })); // Permite tudo temporariamente para testar
 app.use(bodyParser.json());
 
 /* ---------- MongoDB ---------- */
@@ -97,5 +97,5 @@ app.delete("/api/auditorias/:id", async (req, res) => {
 /* ---------- SERVER ---------- */
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () =>
-  console.log(`🚀 Server rodando em http://localhost:${PORT}`),
+  console.log(`🚀 Server rodando em http://localhost:${PORT}`)
 );
