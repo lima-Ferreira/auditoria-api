@@ -27,10 +27,14 @@ router.get("/:id", async (req, res) => {
     // Configuração específica para rodar no RENDER
     const browser = await puppeteer.launch({
       headless: "new",
-      executablePath: puppeteer.executablePath(),
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath:
+        "/tmp/puppeteer/chrome/linux-145.0.7632.46/chrome-linux/chrome",
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+      ],
     });
-
     const page = await browser.newPage();
     // No puppeteer usamos 'networkidle0' para garantir que carregou tudo
     await page.setContent(html, { waitUntil: "networkidle0" });
