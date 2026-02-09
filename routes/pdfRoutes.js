@@ -3,10 +3,7 @@ const router = express.Router();
 const Auditoria = require("../models/Auditoria");
 const { generateAuditHtml } = require("../utils/pdfTemplate");
 const puppeteer = require("puppeteer"); // Trocamos para puppeteer
-const fs = require("fs");
-
-console.log("Conteúdo de /tmp/puppeteer:");
-console.log(fs.readdirSync("/tmp/puppeteer", { recursive: true }));
+const path = require("path");
 
 router.get("/:id", async (req, res) => {
   try {
@@ -25,14 +22,21 @@ router.get("/:id", async (req, res) => {
 
     // Configuração específica para rodar no RENDER
     const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath:
-        "/tmp/puppeteer/chrome/linux-145.0.7632.46/chrome-linux/chrome",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
       ],
+      // O segredo: Aponta para a pasta .cache dentro do seu projeto no Render
+      executablePath: path.join(
+        process.cwd(),
+        ".cache",
+        "puppeteer",
+        "chrome",
+        "linux-145.0.7632.46",
+        "chrome-linux64",
+        "chrome"
+      ),
     });
 
     const page = await browser.newPage();
