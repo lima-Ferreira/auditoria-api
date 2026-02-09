@@ -10,7 +10,7 @@ const Auditor = require("./models/Auditor");
 const Auditoria = require("./models/Auditoria");
 
 // ROTAS
-const pdfRoutes = require("./routes/pdfRoutes");
+const pdfRoutes = require("./routes/geradorPdf");
 
 const app = express();
 
