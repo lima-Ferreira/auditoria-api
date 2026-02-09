@@ -1,62 +1,26 @@
-const express = require("express");
-const router = express.Router();
-const Auditoria = require("../models/Auditoria");
-const { generateAuditHtml } = require("../utils/pdfTemplate");
-const puppeteer = require("puppeteer"); // Trocamos para puppeteer
+const { generateAuditPdf } = require("../utils/pdfGenerator");
+const fs = require("fs");
+const path = require("path");
 
 router.get("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const auditoria = await Auditoria.findById(req.params.id).populate(
+      "loja gerente auditor"
+    );
+    if (!auditoria) return res.status(404).send("Auditoria não encontrada");
 
-    const auditoria = await Auditoria.findById(id)
-      .populate("loja")
-      .populate("gerente")
-      .populate("auditor");
+    // Lê a logo
+    const logoPath = path.join(__dirname, "../utils/logo.bmp");
+    const logoBase64 = fs.readFileSync(logoPath).toString("base64");
 
-    if (!auditoria) {
-      return res.status(404).json({ error: "Auditoria não encontrada" });
-    }
+    const pdfDoc = generateAuditPdf(auditoria, logoBase64);
 
-    const html = generateAuditHtml(auditoria);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `inline; filename=auditoria.pdf`);
 
-    const browser = await puppeteer.launch({
-      // Tente remover o executablePath completamente primeiro
-      // Se não funcionar, use este que é o padrão do Docker Linux:
-      executablePath: "/usr/bin/google-chrome-stable",
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-      ],
-    });
-
-    const page = await browser.newPage();
-    // No puppeteer usamos 'networkidle0' para garantir que carregou tudo
-    await page.setContent(html, { waitUntil: "networkidle0" });
-
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: {
-        top: "20px",
-        bottom: "20px",
-        left: "20px",
-        right: "20px",
-      },
-    });
-
-    await browser.close();
-
-    res.set({
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `inline; filename=auditoria_${id}.pdf`,
-    });
-
-    return res.send(pdfBuffer);
+    pdfDoc.pipe(res);
+    pdfDoc.end();
   } catch (error) {
-    console.error("ERRO PDF:", error);
-    return res.status(500).json({ error: error.message });
+    res.status(500).send(error.message);
   }
 });
-
-module.exports = router;
