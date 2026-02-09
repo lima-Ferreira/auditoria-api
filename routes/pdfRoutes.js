@@ -25,18 +25,10 @@ router.get("/:id", async (req, res) => {
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
+        "--single-process",
+        "--no-zygote",
       ],
-      // O segredo: Aponta para a pasta .cache dentro do seu projeto no Render
-      executablePath: path.join(
-        process.cwd(),
-        ".cache",
-        "puppeteer",
-        "chrome",
-        "linux-145.0.7632.46",
-        "chrome-linux64",
-        "chrome"
-      ),
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, // Opcional se usar o script acima
     });
 
     const page = await browser.newPage();
