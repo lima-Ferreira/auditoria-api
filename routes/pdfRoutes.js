@@ -20,12 +20,16 @@ router.get("/:id", async (req, res) => {
     const html = generateAuditHtml(auditoria);
 
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome-stable", // Caminho EXATO do Docker
+      // REMOVA a linha 'executablePath' ou use a lógica abaixo:
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH ||
+        "/usr/bin/google-chrome-stable",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
+        "--single-process",
       ],
     });
 
