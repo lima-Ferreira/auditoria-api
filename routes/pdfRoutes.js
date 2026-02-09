@@ -20,13 +20,15 @@ router.get("/:id", async (req, res) => {
     const html = generateAuditHtml(auditoria);
 
     // Configuração específica para rodar no RENDER
+    // Configuração para rodar no RENDER (Dinâmica)
     const browser = await puppeteer.launch({
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
       ],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+      // Remova a linha do executablePath ou deixe como está abaixo:
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     });
 
     const page = await browser.newPage();
