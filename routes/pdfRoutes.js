@@ -3,7 +3,6 @@ const router = express.Router();
 const Auditoria = require("../models/Auditoria");
 const { generateAuditHtml } = require("../utils/pdfTemplate");
 const puppeteer = require("puppeteer"); // Trocamos para puppeteer
-const path = require("path");
 
 router.get("/:id", async (req, res) => {
   try {
@@ -20,18 +19,16 @@ router.get("/:id", async (req, res) => {
 
     const html = generateAuditHtml(auditoria);
 
-    // Configuração específica para rodar no RENDER
     const browser = await puppeteer.launch({
+      executablePath: "/usr/bin/google-chrome-stable", // Caminho EXATO do Docker
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
       ],
-      // Remova ou comente a linha 'executablePath' se ela estiver fixa,
-      // ou use a lógica abaixo:
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     });
+
     const page = await browser.newPage();
     // No puppeteer usamos 'networkidle0' para garantir que carregou tudo
     await page.setContent(html, { waitUntil: "networkidle0" });
