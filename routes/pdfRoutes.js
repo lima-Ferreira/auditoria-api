@@ -22,14 +22,15 @@ router.get("/:id", async (req, res) => {
 
     // Configuração específica para rodar no RENDER
     const browser = await puppeteer.launch({
-      // O segredo está aqui: ele busca o caminho dinamicamente
-      executablePath: puppeteer.executablePath(),
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
+        "--single-process",
       ],
+      // REMOVA a linha do executablePath: puppeteer.executablePath()
     });
+
     const page = await browser.newPage();
     // No puppeteer usamos 'networkidle0' para garantir que carregou tudo
     await page.setContent(html, { waitUntil: "networkidle0" });
