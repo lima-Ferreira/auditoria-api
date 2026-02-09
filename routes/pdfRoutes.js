@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Auditoria = require("../models/Auditoria");
 const { generateAuditHtml } = require("../utils/pdfTemplate");
-const { chromium } = require("playwright");
+const puppeteer = require("puppeteer"); // Trocamos para puppeteer
 
 router.get("/:id", async (req, res) => {
   try {
@@ -19,12 +19,19 @@ router.get("/:id", async (req, res) => {
 
     const html = generateAuditHtml(auditoria);
 
-    const browser = await chromium.launch({
-      headless: true,
+    // Configuração específica para rodar no RENDER
+    const browser = await puppeteer.launch({
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+      ],
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
     });
 
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle" });
+    // No puppeteer usamos 'networkidle0' para garantir que carregou tudo
+    await page.setContent(html, { waitUntil: "networkidle0" });
 
     const pdfBuffer = await page.pdf({
       format: "A4",
